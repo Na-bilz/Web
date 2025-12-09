@@ -99,19 +99,25 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentLink = '';
 
     // Delegate click event for dynamically added gallery items
+    // Delegate click event for dynamically added gallery items
     document.addEventListener('click', (e) => {
-        const galleryItem = e.target.closest('.gallery-item[data-full-img]');
+        // Check for gallery item with either full img or link
+        const galleryItem = e.target.closest('.gallery-item');
 
         if (galleryItem) {
-            e.preventDefault();
             const fullImgSrc = galleryItem.getAttribute('data-full-img');
             const linkUrl = galleryItem.getAttribute('data-link');
 
             if (fullImgSrc) {
+                e.preventDefault();
                 lightboxImg.src = fullImgSrc;
                 currentLink = linkUrl;
                 lightbox.classList.add('active');
                 document.body.style.overflow = 'hidden'; // Disable scroll
+            } else if (linkUrl) {
+                // Direct link without lightbox
+                // e.preventDefault(); // Optional: if we want to stop default anchor behavior (though these are divs)
+                window.open(linkUrl, '_blank');
             }
         }
     });
