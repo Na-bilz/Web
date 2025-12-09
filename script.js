@@ -32,8 +32,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (targetId === 'display-1') {
                     // Game Projects
                     workBg.style.backgroundImage = `
-                        linear-gradient(to bottom, rgba(11, 12, 16, 0.9), rgba(11, 12, 16, 0.95)), 
-                        url('assets/bg-work.png')`;
+                        linear-gradient(to bottom, rgba(11, 12, 16, 0.2), rgba(11, 12, 16, 0.2)), 
+                        url('assets/bg-work-new.png')`;
                 } else if (targetId === 'display-2') {
                     // 2D Illustrations (Artworks)
                     workBg.style.backgroundImage = `

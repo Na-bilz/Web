@@ -1,6 +1,6 @@
 :root {
     --bg-color: #0b0c10;
-    --card-bg: #1f2833;
+    --card-bg: rgba(23, 26, 29, 0.4);
     --text-primary: #ffffff;
     --text-secondary: #c5c6c7;
     --accent-color: #c3fffb;
