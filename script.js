@@ -86,19 +86,26 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Lightbox Functionality ---
     const lightbox = document.createElement('div');
     lightbox.id = 'lightbox';
+    // Added title and video wrapper
     lightbox.innerHTML = `
         <div class="lightbox-content-wrapper">
+            <h2 class="lightbox-title"></h2>
             <button class="lightbox-close"><i class="fa-solid fa-xmark"></i></button>
-            <img src="" alt="Full view" class="lightbox-img">
+            <img src="" alt="Full view" class="lightbox-img lightbox-content-element">
+            <div class="lightbox-video-wrapper lightbox-content-element hidden">
+                <iframe src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            </div>
         </div>
     `;
     document.body.appendChild(lightbox);
 
     const lightboxImg = lightbox.querySelector('.lightbox-img');
+    const lightboxVideoWrapper = lightbox.querySelector('.lightbox-video-wrapper');
+    const lightboxIframe = lightbox.querySelector('iframe');
+    const lightboxTitle = lightbox.querySelector('.lightbox-title');
     const lightboxClose = lightbox.querySelector('.lightbox-close');
     let currentLink = '';
 
-    // Delegate click event for dynamically added gallery items
     // Delegate click event for dynamically added gallery items
     document.addEventListener('click', (e) => {
         // Check for gallery item with either full img or link
@@ -106,17 +113,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (galleryItem) {
             const fullImgSrc = galleryItem.getAttribute('data-full-img');
+            const videoId = galleryItem.getAttribute('data-video');
             const linkUrl = galleryItem.getAttribute('data-link');
+            const titleText = galleryItem.getAttribute('data-title');
 
-            if (fullImgSrc) {
+            if (fullImgSrc || videoId) {
                 e.preventDefault();
-                lightboxImg.src = fullImgSrc;
-                currentLink = linkUrl;
+                currentLink = linkUrl; // Keep link logic if needed for images
+
+                // Reset State
+                lightboxImg.classList.add('hidden');
+                lightboxVideoWrapper.classList.add('hidden');
+                lightboxTitle.textContent = '';
+
+                if (videoId) {
+                    // Video Mode
+                    lightboxVideoWrapper.classList.remove('hidden');
+                    lightboxIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+                } else if (fullImgSrc) {
+                    // Image Mode
+                    lightboxImg.classList.remove('hidden');
+                    lightboxImg.src = fullImgSrc;
+                    if (titleText) {
+                        lightboxTitle.textContent = titleText;
+                    }
+                }
+
                 lightbox.classList.add('active');
                 document.body.style.overflow = 'hidden'; // Disable scroll
             } else if (linkUrl) {
-                // Direct link without lightbox
-                // e.preventDefault(); // Optional: if we want to stop default anchor behavior (though these are divs)
+                // Direct link without lightbox (Crogue, WayOfLife, etc.)
                 window.open(linkUrl, '_blank');
             }
         }
@@ -126,9 +152,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function closeLightbox() {
         lightbox.classList.remove('active');
         document.body.style.overflow = ''; // Enable scroll
-        // Clear src after transition to prevent flicker
+        // Clear src after transition to prevent flicker and STOP AUDIO
         setTimeout(() => {
-            if (!lightbox.classList.contains('active')) lightboxImg.src = '';
+            if (!lightbox.classList.contains('active')) {
+                lightboxImg.src = '';
+                lightboxIframe.src = ''; // Stop video/audio
+                lightboxTitle.textContent = '';
+            }
         }, 300);
     }
 
@@ -145,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Click Image to Visit Link
+    // Click Image to Visit Link (Only for images)
     lightboxImg.addEventListener('click', (e) => {
         e.stopPropagation();
         if (currentLink) {
